@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biometric Security Login</title>
+    <script>
+        function openCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    var video = document.getElementById("facial_image");
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function (err) {
+                    console.log("Error accessing camera: " + err);
+                });
+        }
+
+        function captureImage() {
+            var canvas = document.createElement('canvas');
+            var video = document.getElementById('facial_image');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var facialImageData = canvas.toDataURL('image/png');
+            document.getElementById('facial_data').value = facialImageData;
+        }
+    </script>
+</head>
+<body>
+    <h1>Biometric Security Login</h1>
+    <form action="/login" method="post" onsubmit="captureImage()">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        
+        <!-- Facial Recognition -->
+        <button type="button" onclick="openCamera()">Use Camera for Facial Recognition</button><br><br>
+        <video id="facial_image" autoplay></video><br><br>
+        <input type="hidden" id="facial_data" name="facial_data">
+        
+        <!-- Voice Recognition -->
+        <label for="voice_sample">Voice Sample:</label>
+        <input type="file" id="voice_sample" name="voice_sample" accept="audio/*" capture="microphone" required><br><br>
+        
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
